@@ -1,4 +1,5 @@
 {
+  "main": "README.md",
   "scripts": {
     "build:pdf": "md-to-pdf docs/README.md --config-file ./pdf-configs/config.js"
   },
