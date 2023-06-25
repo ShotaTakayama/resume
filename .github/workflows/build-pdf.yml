@@ -5,53 +5,43 @@ on:
     branches: [main]
     paths: 'docs/README.md'
   workflow_dispatch:
+name: release pdf
 
 jobs:
-  setup:
-    name: Setup
-    runs-on: ubuntu-latest
-    timeout-minutes: 3
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - uses: actions/cache@v2
-        id: node_modules_cache_id
-        with:
-          path: |
-            node_modules
-          key: node-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
-      - name: Run yarn install
-        run: yarn --check-files --frozen-lockfile --non-interactive
-      - name: Cache workspace
-        uses: actions/cache@v3
-        with:
-          path: |
-            node_modules
-          key: node-${{ github.sha }}
-  release:
+  build:
     name: Release PDF
     runs-on: ubuntu-latest
-    timeout-minutes: 3
-    needs:
-      - setup
     permissions:
       contents: write
       pull-requests: write
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - name: Restore workspace cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            node_modules
-          key: node-${{ github.sha }}
-      - name: Build PDF
-        run: make build-pdf
+          cache: yarn
+      - run: yarn install
+
+      - name: Install packages
+        run: |
+          sudo apt-get install -y chromium-browser
+          
+          sudo apt-get install -y libatk1.0-0
+          sudo apt-get install -y libatk-bridge2.0-0
+          sudo apt-get install -y libcups2
+          sudo apt-get install -y libxkbcommon0
+          sudo apt-get install -y libxcomposite-dev
+          sudo apt-get install -y libxdamage1
+          sudo apt-get install -y libxrandr2
+          sudo apt-get install -y libgbm-dev
+          sudo apt-get install -y libpangocairo-1.0-0
+          sudo apt-get install -y libasound2
+
+      - name: Build pdf
+        run: yarn build:pdf
+      
       - name: Create a draft release
         uses: softprops/action-gh-release@v1
         with:
