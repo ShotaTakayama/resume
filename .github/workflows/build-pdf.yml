@@ -1,38 +1,32 @@
 name: Release PDF
 
 on:
-  pull_request:
+  push:
     branches: [main]
     paths: 'docs/README.md'
   workflow_dispatch:
 
 jobs:
-  setup:
-    name: Setup
+  build:
+    name: Release PDF
     runs-on: ubuntu-latest
-    timeout-minutes: 3
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
       - uses: actions/setup-node@v3
         with:
           node-version: 18
-      - uses: actions/cache@v2
-        id: node_modules_cache_id
-        with:
-          path: |
-            node_modules
-          key: node-deps-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
-      - name: Run yarn install
-        run: yarn --check-files --frozen-lockfile --non-interactive
-      - name: Cache workspace
-        uses: actions/cache@v3
-        with:
-          path: |
-            node_modules
-          key: node-${{ github.sha }}
+          cache: yarn
+      - run: yarn install
+
       - name: Install packages
         run: |
           sudo apt-get install -y chromium-browser
+          
           sudo apt-get install -y libatk1.0-0
           sudo apt-get install -y libatk-bridge2.0-0
           sudo apt-get install -y libcups2
@@ -44,28 +38,9 @@ jobs:
           sudo apt-get install -y libpangocairo-1.0-0
           sudo apt-get install -y libasound2
 
-  release:
-    name: Release PDF
-    runs-on: ubuntu-latest
-    timeout-minutes: 3
-    needs:
-      - setup
-    permissions:
-      contents: write
-      pull-requests: write
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: Restore workspace cache
-        uses: actions/cache@v3
-        with:
-          path: |
-            node_modules
-          key: node-${{ github.sha }}
-      - name: Build PDF
-        run: make build-pdf
+      - name: Build pdf
+        run: yarn build:pdf
+      
       - name: Create a draft release
         uses: softprops/action-gh-release@v1
         with:
