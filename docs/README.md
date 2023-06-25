@@ -17,7 +17,7 @@
 
 ### 言語
 
-SQL
+SQL | 
 
 ### フレームワーク等
 
@@ -31,7 +31,7 @@ SQL
 
 #### AWS
 
-Lambda | API-Gateway
+Lambda | API-Gateway | RDS
 
 ### SaaS/PaaS
 
