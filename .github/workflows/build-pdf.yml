@@ -37,19 +37,17 @@ jobs:
           sudo apt-get install -y libgbm-dev
           sudo apt-get install -y libpangocairo-1.0-0
           sudo apt-get install -y libasound2
-
+      
       - name: Build pdf
         run: yarn build:pdf
       
-      - name: Checkout code
-        uses: actions/checkout@v2
-
       - name: Generate tag
         run: |
-          export TAG_NAME=$(sed -n 6P pubspec.yaml | sed 's/version: //')
+          export TAG_NAME="ver$(TZ=Asia/Tokyo date +%y%m%d%H%M)"
           git tag $TAG_NAME
           git push origin $TAG_NAME
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
+      
       - name: Generate release note
         uses: softprops/action-gh-release@v1
         with:
