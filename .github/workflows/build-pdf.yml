@@ -1,4 +1,4 @@
-name: Release PDF
+name: Generate Release PDF
 
 on:
   pull_request:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    name: Release PDF
+    name: Generate Release PDF
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -23,7 +23,7 @@ jobs:
           cache: yarn
       - run: yarn install
 
-      - name: Install packages
+      - name: Install Packages
         run: |
           sudo apt-get install -y chromium-browser
           
@@ -38,12 +38,12 @@ jobs:
           sudo apt-get install -y libpangocairo-1.0-0
           sudo apt-get install -y libasound2
       
-      - name: Build pdf
+      - name: Generate PDF
         run: yarn build:pdf
       
-      - name: Generate tag
+      - name: Generate TAG_NAME
         run: |
-          export TAG_NAME="ver$(TZ=Asia/Tokyo date +%y%m%d%H%M)"
+          export TAG_NAME=$(TZ=Asia/Tokyo date +%y.%m.%d.%H%M)
           git tag $TAG_NAME
           git push origin $TAG_NAME
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
