@@ -1,4 +1,4 @@
-name: Generate Release and PDF
+name: Generate Release PDF
 
 on:
   pull_request:
@@ -8,12 +8,11 @@ on:
 
 jobs:
   build:
-    name: Generate Release and PDF
+    name: Generate Release PDF
     runs-on: ubuntu-latest
     permissions:
       contents: write
       pull-requests: write
-
     steps:
       - uses: actions/checkout@v3
         with:
@@ -22,13 +21,12 @@ jobs:
         with:
           node-version: 18
           cache: yarn
-      
-      - name: Install yarn
       - run: yarn install
 
-      - name: Install Chromium and Packages
+      - name: Install Packages
         run: |
           sudo apt-get install -y chromium-browser
+          
           sudo apt-get install -y libatk1.0-0
           sudo apt-get install -y libatk-bridge2.0-0
           sudo apt-get install -y libcups2
@@ -45,14 +43,15 @@ jobs:
       
       - name: Generate TAG_NAME
         run: |
-          export TAG_NAME=$(TZ=Asia/Tokyo date +'%y.%m.%d.%H%M')
+          export TAG_NAME=$(TZ=Asia/Tokyo date +%y.%m.%d.%H%M)
           git tag $TAG_NAME
           git push origin $TAG_NAME
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
       
-      - name: Generate Release
+      - name: Generate release note
         uses: softprops/action-gh-release@v1
         with:
           name: ${{ env.TAG_NAME }}
           tag_name: ${{ env.TAG_NAME }}
+          generate_release_notes: true
           files: docs/README.pdf
