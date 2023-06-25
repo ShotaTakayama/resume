@@ -41,11 +41,10 @@ jobs:
       - name: Build pdf
         run: yarn build:pdf
       
-      - name: Create a draft release
-        uses: softprops/action-gh-release@v1
+      - name: upload Release
+        uses: actions/upload-release-asset@v1
         with:
-          body: ${{ github.event.pull_request.title }}
-          draft: true
-          fail_on_unmatched_files: true
-          files: docs/README.pdf
-          name: Release ${{ github.ref }}
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./docs/README.pdf
+          asset_name: resume.pdf
+          asset_content_type: application/pdf
