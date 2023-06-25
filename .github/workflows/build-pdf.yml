@@ -1,11 +1,10 @@
 name: Release PDF
 
 on:
-  push:
+pull_request:
     branches: [main]
     paths: 'docs/README.md'
   workflow_dispatch:
-name: release pdf
 
 jobs:
   build:
