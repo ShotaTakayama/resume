@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "README.md",
   "scripts": {
-    "build:pdf": "md-to-pdf docs/README.md --config-file ./pdf-configs/config.js"
+    "generate:pdf": "md-to-pdf docs/README.md --config-file ./pdf-configs/config.js"
   },
   "repository": "git@github.com:ShotaTakayama/resume.git",
   "author": "ShotaTakayama <ShotaTakayama.tech@gmail.com>",

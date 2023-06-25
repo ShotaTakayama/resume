@@ -39,11 +39,11 @@ jobs:
           sudo apt-get install -y libasound2
       
       - name: Generate PDF
-        run: yarn build:pdf
+        run: yarn generate:pdf
       
       - name: Generate TAG_NAME
         run: |
-          export TAG_NAME=$(TZ=Asia/Tokyo date +%y.%m.%d.%H%M)
+          export TAG_NAME=$(TZ=Asia/Tokyo date +%Y.%m.%d.%H%M)
           git tag $TAG_NAME
           git push origin $TAG_NAME
           echo "TAG_NAME=$TAG_NAME" >> $GITHUB_ENV
@@ -53,5 +53,4 @@ jobs:
         with:
           name: ${{ env.TAG_NAME }}
           tag_name: ${{ env.TAG_NAME }}
-          generate_release_notes: true
           files: docs/README.pdf
